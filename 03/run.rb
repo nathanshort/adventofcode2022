@@ -9,13 +9,12 @@ end
 p1sum, p2sum = 0,0
 
 lines.each do |line|
-  a,b = line.chars.each_slice(line.length/2).map(&:join)
-  p1sum += score( ( a.chars & b.chars).first )
+  p1sum += score( line.chars.each_slice(line.length/2).reduce(:&).first )
 end
 
 
 lines.each_slice(3) do |triple|
-  p2sum += score( ( triple[0].chars & triple[1].chars & triple[2].chars).first )
+  p2sum += score( triple.map(&:chars).reduce(:&).first )
 end
 
 p p1sum, p2sum
