@@ -1,6 +1,5 @@
-
 # maps dir to size of files in dir
-dirs = {}
+dirs = Hash.new(0)
 
 pwd = []
 ARGF.each_line( chomp: true ) do |line|
@@ -10,13 +9,8 @@ ARGF.each_line( chomp: true ) do |line|
   when /\$ cd (.+)/
     pwd << $1
   when /\A(\d+) (.+)\Z/
-    dupped = pwd.dup
-    while dupped.count != 0
-      path = dupped.join("/")
-      dupped.pop
-      dirs[path] ||= 0
-      # assumes that the input isnt going to the same dir multiple times
-      dirs[path] += $1.to_i
+    pwd.each_with_index do |_,i| 
+      dirs[pwd[0..i].join("/")] += $1.to_i
     end
   end
 end
