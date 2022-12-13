@@ -22,15 +22,16 @@ def find_path( grid, the_start, the_end )
         pq.push(a)
       end
     end
+
+    break if current == the_end
   end
 
-  target = the_end
-  path = grid[target] 
-  pprev = prev[target]
+  path = grid[the_end]
+  pprev = prev[the_end]
   return 1000000 if ! pprev
 
   while pprev != the_start
-    path += (grid[pprev])
+    path += grid[pprev]
     pprev = prev[pprev]
   end
 
