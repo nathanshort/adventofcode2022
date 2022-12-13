@@ -12,23 +12,23 @@ def find_path( grid, the_start, the_end )
   while ! pq.empty?
     current = pq.pop
     visited[current] = true
+    break if current == the_end
 
     current.hvadjacent.each do |a|
       next if ! grid[a] || visited.key?(a) || ( (grid[a].ord-grid[current].ord) > 1 )
-      distance = 1
+      distance = 1 + distances[current]
       if ! distances.key?(a) || distances[a] > distance
         distances[a] = distance
         prev[a] = current
         pq.push(a)
       end
     end
-
-    break if current == the_end
   end
+
+  return 100_000_000 if ! distances[the_end]
 
   path = grid[the_end]
   pprev = prev[the_end]
-  return 1000000 if ! pprev
 
   while pprev != the_start
     path += grid[pprev]
@@ -57,8 +57,6 @@ starts = []
 grid.each do |pp|
   starts << pp if grid[pp] == 'a'
 end
-
-
 p "part 2: #{starts.map{ |s| find_path(grid, s, the_end ) }.min}"
 
 
