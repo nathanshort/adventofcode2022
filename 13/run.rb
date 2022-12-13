@@ -14,21 +14,16 @@ def compare( lhs, rhs )
     elsif l.kind_of?(Array) && r.kind_of?(Array)
       rr = compare( l.dup,r.dup )
       return rr if rr != 0
-    elsif
-      l.kind_of?(Numeric) ^ r.kind_of?(Numeric)
+    else
       l = l.kind_of?(Numeric) ? [l] : l
       r = r.kind_of?(Numeric) ? [r] : r
       rr = compare( l.dup, r.dup )
       return rr if rr != 0
     end
   end
-  -1
 end
 
-all_packets = []
-ARGF.read.split(/\n\n/).each do |split|
-  split.split(/\n/).map{ |x| eval(x) }.each { |x| all_packets.append(x) }
-end
+all_packets = ARGF.read.split(/\n+/).map { |x| eval(x) }
 
 compares = []
 index = 1
@@ -36,7 +31,6 @@ all_packets.each_slice(2) do |l,r|
   compares << index if compare( l.dup, r.dup ) == -1
   index += 1
 end
-
 
 all_packets << [[2]]
 all_packets << [[6]]
