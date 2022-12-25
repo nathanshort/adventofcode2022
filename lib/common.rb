@@ -259,3 +259,33 @@ class Grid
 end
 
 
+class ShiftedGrid < Grid
+
+  attr_accessor :xoff, :yoff
+
+  def initialize( args = {} )
+    super( args )
+    @xoff, @yoff = 0,0
+  end
+
+  def xmin
+    @xmin + @xoff
+  end
+
+  def xmax
+    @xmax + @xoff
+  end
+
+  def each( &block )
+    if block_given?
+      points.keys.sort.each do |k|
+        block.call( Point.new(k.x+@xoff,k.y+@yoff), points[k] )
+      end
+    else
+      to_enum(:each)
+    end
+  end
+
+end
+
+
