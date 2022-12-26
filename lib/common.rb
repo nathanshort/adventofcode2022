@@ -96,19 +96,28 @@ end
 
 class Cursor
 
-  attr_reader :location
+  attr_accessor :location, :heading
 
+  # set :ygrows to :north or :south
+  # :north -> north moves, increase the y
+  # :south -> south moves, increase the y
+  # defaut is :north
   def initialize( args )
     @heading = args[:heading]
     @location = Point.new( args[:x] || 0, args[:y] || 0 )
+    @ygrows = args[:ygrows] || :north
+  end
+
+  def initialize_copy( original )
+    @location = original.location.dup
   end
 
   def move( args )
     case args[:direction]
       when 'N'
-        @location.y += args[:by]
-      when 'S'
         @location.y -= args[:by]
+      when 'S'
+        @location.y += args[:by]
       when 'W'
          @location.x -= args[:by]
       when 'E'
@@ -126,8 +135,24 @@ class Cursor
     end
   end
 
+  def next_forward( args )
+    factor = ( @ygrows == :south ) ? { 'N' => -1, 'S' => 1, 'E' => 1, 'W' => -1}
+             : { 'N' => 1, 'S' => -1, 'E' => 1, 'W' => -1}
+
+    x, y = @location.x, @location.y
+    case @heading
+    when 'N','S' 
+      y += args[:by] * factor[@heading]
+    when 'E','W'
+      x += args[:by] * factor[@heading]
+    end
+    Point.new(x,y)
+  end
+
   def forward( args )
-    factor = { 'N' => 1, 'S' => -1, 'E' => 1, 'W' => -1}
+    factor = ( @ygrows == :south ) ? { 'N' => -1, 'S' => 1, 'E' => 1, 'W' => -1}
+             : { 'N' => 1, 'S' => -1, 'E' => 1, 'W' => -1}
+
     case @heading
       when 'N','S' 
         @location.y += args[:by] * factor[@heading]
@@ -219,7 +244,7 @@ class Grid
   end
 
   def initialize_copy( original )
-   @points = original.points.dup
+    @points = original.points.dup
   end
 
   def show
